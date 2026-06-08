@@ -33,6 +33,7 @@
         <li><a href="#layanan" class="nav-link">Layanan</a></li>
         <li><a href="#portofolio" class="nav-link">Portofolio</a></li>
         <li><a href="#proses" class="nav-link">Proses Kerja</a></li>
+        <li><a href="#progress" class="nav-link">Cek Proyek</a></li>
         <li><a href="#kontak" class="nav-link nav-cta">Hubungi Kami</a></li>
       </ul>
     </div>
@@ -524,6 +525,101 @@
     </div>
   </section>
 
+  <!-- ===================== PROGRESS TRACKER ===================== -->
+  <section class="section progress-tracker" id="progress">
+    <div class="container">
+      <span class="section-tag center reveal">Pantau Proyek Anda</span>
+      <h2 class="section-title center reveal">Progress Konstruksi Real-Time</h2>
+      <p class="section-body center reveal">
+        Masukkan kode proyek yang telah diberikan oleh tim kami untuk melihat perkembangan
+        terkini konstruksi Anda beserta dokumentasi foto lapangan.
+      </p>
+
+      <!-- Input Kode -->
+      <div class="tracker-input-wrap reveal">
+        <div class="tracker-input-box">
+          <span class="tracker-input-icon">🔍</span>
+          <input
+            type="text"
+            id="projectCode"
+            class="tracker-input"
+            placeholder="Masukkan kode proyek (contoh: MIP-2025-001)"
+            autocomplete="off"
+          />
+          <button class="btn btn-primary tracker-btn" id="checkProgress">Cek Progress</button>
+        </div>
+        <p class="tracker-hint">Kode proyek tercantum pada dokumen kontrak atau dapat diperoleh melalui tim kami.</p>
+      </div>
+
+      <!-- Error State -->
+      <div class="tracker-error" id="trackerError">
+        <span class="tracker-error-icon">&#9888;&#65039;</span>
+        <div>
+          <strong>Kode proyek tidak ditemukan</strong>
+          <p>Pastikan kode yang Anda masukkan sudah benar, atau hubungi tim MIP untuk bantuan.</p>
+        </div>
+      </div>
+
+      <!-- Result Panel -->
+      <div class="tracker-result" id="trackerResult">
+
+        <!-- Project Header -->
+        <div class="tracker-header">
+          <div class="tracker-project-info">
+            <span class="tracker-badge" id="resultBadge">Aktif</span>
+            <h3 class="tracker-project-name" id="resultName">&#8212;</h3>
+            <p class="tracker-project-meta" id="resultMeta">&#8212;</p>
+          </div>
+          <div class="tracker-dates">
+            <div class="tracker-date-item">
+              <span class="tracker-date-label">Mulai</span>
+              <span class="tracker-date-value" id="resultStart">&#8212;</span>
+            </div>
+            <div class="tracker-date-item">
+              <span class="tracker-date-label">Target Selesai</span>
+              <span class="tracker-date-value" id="resultEnd">&#8212;</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="tracker-progress-section">
+          <div class="tracker-progress-header">
+            <span class="tracker-progress-label">Progress Keseluruhan</span>
+            <span class="tracker-progress-pct" id="resultPct">0%</span>
+          </div>
+          <div class="tracker-bar-bg">
+            <div class="tracker-bar-fill" id="resultBar" style="width:0%"></div>
+          </div>
+
+          <!-- Stage Breakdown -->
+          <div class="tracker-stages" id="resultStages"></div>
+        </div>
+
+        <!-- Update Terakhir -->
+        <div class="tracker-update-note" id="resultUpdate"></div>
+
+        <!-- Foto Dokumentasi -->
+        <div class="tracker-gallery-section">
+          <h4 class="tracker-gallery-title">&#128248; Dokumentasi Lapangan</h4>
+          <div class="tracker-gallery" id="resultGallery"></div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Lightbox -->
+  <div class="lightbox" id="lightbox">
+    <button class="lightbox-close" id="lightboxClose">&#10005;</button>
+    <button class="lightbox-nav lightbox-prev" id="lightboxPrev">&#8249;</button>
+    <div class="lightbox-content">
+      <img src="" alt="" id="lightboxImg" />
+      <p class="lightbox-caption" id="lightboxCaption"></p>
+    </div>
+    <button class="lightbox-nav lightbox-next" id="lightboxNext">&#8250;</button>
+  </div>
+
   <!-- ===================== FOOTER ===================== -->
   <footer class="footer">
     <div class="footer-container">
@@ -571,5 +667,531 @@
   <button class="back-to-top" id="backToTop" aria-label="Kembali ke atas">↑</button>
 
   <script src="script.js"></script>
+
+  <!-- ===== PROGRESS TRACKER STYLES ===== -->
+  <style>
+    /* ---- Section wrapper ---- */
+    .progress-tracker { background: #f7f8fa; }
+
+    /* ---- Input box ---- */
+    .tracker-input-wrap {
+      max-width: 680px;
+      margin: 0 auto 2rem;
+      text-align: center;
+    }
+    .tracker-input-box {
+      display: flex;
+      align-items: center;
+      background: #fff;
+      border: 2px solid #d4a853;
+      border-radius: 12px;
+      padding: 6px 8px 6px 16px;
+      gap: 10px;
+      box-shadow: 0 4px 24px rgba(0,0,0,.07);
+      transition: box-shadow .2s;
+    }
+    .tracker-input-box:focus-within {
+      box-shadow: 0 6px 32px rgba(212,168,83,.18);
+    }
+    .tracker-input-icon { font-size: 1.2rem; flex-shrink: 0; }
+    .tracker-input {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-size: 1rem;
+      font-family: inherit;
+      background: transparent;
+      color: #1a1a2e;
+      letter-spacing: .5px;
+    }
+    .tracker-btn { flex-shrink: 0; padding: 10px 22px; font-size: .9rem; }
+    .tracker-hint {
+      margin-top: .75rem;
+      font-size: .82rem;
+      color: #888;
+    }
+
+    /* ---- Error ---- */
+    .tracker-error {
+      display: none;
+      max-width: 680px;
+      margin: 0 auto 1.5rem;
+      background: #fff4f4;
+      border: 1.5px solid #e57373;
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      gap: 12px;
+      align-items: flex-start;
+      color: #c62828;
+    }
+    .tracker-error.show { display: flex; }
+    .tracker-error-icon { font-size: 1.4rem; line-height: 1; }
+    .tracker-error strong { display: block; margin-bottom: .2rem; }
+    .tracker-error p { margin: 0; font-size: .88rem; color: #b71c1c; }
+
+    /* ---- Result Panel ---- */
+    .tracker-result {
+      display: none;
+      max-width: 900px;
+      margin: 0 auto;
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 8px 48px rgba(0,0,0,.09);
+      overflow: hidden;
+      animation: fadeUp .5s ease both;
+    }
+    .tracker-result.show { display: block; }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ---- Project Header ---- */
+    .tracker-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 1rem;
+      padding: 1.8rem 2rem;
+      background: linear-gradient(135deg, #1a1a2e 0%, #2d2d44 100%);
+      color: #fff;
+    }
+    .tracker-badge {
+      display: inline-block;
+      padding: 3px 14px;
+      border-radius: 20px;
+      font-size: .75rem;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: .5rem;
+      background: #d4a853;
+      color: #1a1a2e;
+    }
+    .tracker-badge.selesai { background: #4caf50; color: #fff; }
+    .tracker-badge.ditunda { background: #ff9800; color: #fff; }
+    .tracker-project-name { margin: 0 0 .3rem; font-size: 1.4rem; font-family: 'Playfair Display', serif; }
+    .tracker-project-meta { margin: 0; font-size: .88rem; color: #aab; }
+    .tracker-dates { display: flex; gap: 2rem; }
+    .tracker-date-item { display: flex; flex-direction: column; gap: 4px; }
+    .tracker-date-label { font-size: .72rem; text-transform: uppercase; letter-spacing: 1px; color: #aab; }
+    .tracker-date-value { font-size: .95rem; font-weight: 600; color: #d4a853; }
+
+    /* ---- Progress Bar ---- */
+    .tracker-progress-section { padding: 1.8rem 2rem; border-bottom: 1px solid #eee; }
+    .tracker-progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: .75rem;
+    }
+    .tracker-progress-label { font-weight: 600; color: #333; }
+    .tracker-progress-pct { font-size: 1.6rem; font-weight: 700; color: #d4a853; }
+    .tracker-bar-bg {
+      background: #eee;
+      border-radius: 99px;
+      height: 14px;
+      overflow: hidden;
+    }
+    .tracker-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #c8941a, #f0c040);
+      border-radius: 99px;
+      width: 0%;
+      transition: width 1.2s cubic-bezier(.4,0,.2,1);
+    }
+
+    /* ---- Stages ---- */
+    .tracker-stages {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .75rem;
+      margin-top: 1.2rem;
+    }
+    .tracker-stage-item {
+      flex: 1 1 140px;
+      background: #f7f8fa;
+      border-radius: 10px;
+      padding: .75rem 1rem;
+    }
+    .tracker-stage-name { font-size: .78rem; color: #666; margin-bottom: .4rem; font-weight: 500; }
+    .tracker-stage-bar-bg {
+      background: #e0e0e0;
+      border-radius: 99px;
+      height: 7px;
+      overflow: hidden;
+      margin-bottom: .3rem;
+    }
+    .tracker-stage-bar-fill {
+      height: 100%;
+      background: #d4a853;
+      border-radius: 99px;
+      transition: width 1.4s ease;
+    }
+    .tracker-stage-bar-fill.done { background: #4caf50; }
+    .tracker-stage-pct { font-size: .8rem; font-weight: 700; color: #333; }
+
+    /* ---- Update Note ---- */
+    .tracker-update-note {
+      padding: .8rem 2rem;
+      font-size: .83rem;
+      color: #888;
+      background: #fafafa;
+      border-bottom: 1px solid #eee;
+    }
+
+    /* ---- Gallery ---- */
+    .tracker-gallery-section { padding: 1.8rem 2rem; }
+    .tracker-gallery-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      margin: 0 0 1.2rem;
+      color: #1a1a2e;
+    }
+    .tracker-gallery {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 1rem;
+    }
+    .tracker-gallery-item {
+      position: relative;
+      border-radius: 10px;
+      overflow: hidden;
+      cursor: pointer;
+      aspect-ratio: 4/3;
+      background: #eee;
+    }
+    .tracker-gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform .3s ease;
+    }
+    .tracker-gallery-item:hover img { transform: scale(1.06); }
+    .tracker-gallery-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,.7) 0%, transparent 55%);
+      display: flex;
+      align-items: flex-end;
+      padding: .75rem;
+      opacity: 0;
+      transition: opacity .25s;
+    }
+    .tracker-gallery-item:hover .tracker-gallery-overlay { opacity: 1; }
+    .tracker-gallery-caption { color: #fff; font-size: .78rem; font-weight: 500; }
+
+    /* Foto placeholder (jika gambar belum ada) */
+    .tracker-photo-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #2d2d44, #1a1a2e);
+      color: #d4a853;
+      font-size: 2rem;
+      gap: .4rem;
+    }
+    .tracker-photo-placeholder span { font-size: .75rem; color: #aab; }
+
+    /* ---- Lightbox ---- */
+    .lightbox {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.92);
+      z-index: 9999;
+      align-items: center;
+      justify-content: center;
+    }
+    .lightbox.open { display: flex; }
+    .lightbox-content { max-width: 85vw; max-height: 80vh; text-align: center; }
+    .lightbox-content img {
+      max-width: 100%;
+      max-height: 75vh;
+      border-radius: 8px;
+      object-fit: contain;
+    }
+    .lightbox-caption { color: #ccc; margin-top: .75rem; font-size: .88rem; }
+    .lightbox-close {
+      position: absolute;
+      top: 1.2rem;
+      right: 1.5rem;
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 1.8rem;
+      cursor: pointer;
+      line-height: 1;
+    }
+    .lightbox-nav {
+      background: rgba(255,255,255,.12);
+      border: none;
+      color: #fff;
+      font-size: 2.5rem;
+      padding: .4rem 1rem;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: background .2s;
+    }
+    .lightbox-nav:hover { background: rgba(255,255,255,.24); }
+
+    @media (max-width: 600px) {
+      .tracker-header { flex-direction: column; padding: 1.2rem 1.2rem; }
+      .tracker-progress-section, .tracker-gallery-section { padding: 1.2rem; }
+      .tracker-gallery { grid-template-columns: repeat(2, 1fr); }
+      .tracker-input-box { flex-direction: column; align-items: stretch; padding: .75rem; }
+      .tracker-btn { width: 100%; }
+    }
+  </style>
+
+  <!-- ===== PROGRESS TRACKER SCRIPT ===== -->
+  <script>
+  (function () {
+
+    // =========================================================
+    // DATA PROYEK
+    // Tambahkan/edit proyek di sini. Untuk foto, isi "src" dengan
+    // path gambar (misal "images/proyek-abc-01.jpg").
+    // Jika belum ada foto sungguhan, biarkan src kosong ("") maka
+    // akan tampil placeholder otomatis.
+    // =========================================================
+    var PROJECTS = {
+      "MIP-2025-001": {
+        name: "Retaining Wall Kawasan Industri MM2100",
+        client: "Klien Industri — Bekasi, Jawa Barat",
+        status: "aktif",          // "aktif" | "selesai" | "ditunda"
+        start: "Maret 2025",
+        end: "Agustus 2025",
+        pct: 72,
+        lastUpdate: "Diperbarui 5 Juni 2025 oleh Tim Lapangan MIP",
+        stages: [
+          { name: "Perencanaan & Desain",   pct: 100 },
+          { name: "Persiapan Lokasi",        pct: 100 },
+          { name: "Pekerjaan Pondasi",       pct: 95  },
+          { name: "Struktur Beton",          pct: 70  },
+          { name: "Finishing & QC",          pct: 10  }
+        ],
+        photos: [
+          { src: "images/progress/mip001-01.jpg", caption: "Pembersihan & pematangan lahan (Maret 2025)" },
+          { src: "images/progress/mip001-02.jpg", caption: "Pemasangan bekisting pondasi" },
+          { src: "images/progress/mip001-03.jpg", caption: "Pengecoran beton tahap pertama" },
+          { src: "images/progress/mip001-04.jpg", caption: "Struktur retaining wall progres 70%" },
+          { src: "",                                caption: "Dokumentasi minggu ini (segera)" },
+          { src: "",                                caption: "Dokumentasi minggu ini (segera)" }
+        ]
+      },
+
+      "MIP-2025-002": {
+        name: "Main Road & Utility System — Pabrik Susu Ultra",
+        client: "PT Ultra Jaya Milk Industry — MM2100",
+        status: "selesai",
+        start: "Januari 2025",
+        end: "April 2025",
+        pct: 100,
+        lastUpdate: "Serah terima selesai 28 April 2025",
+        stages: [
+          { name: "Perencanaan & Desain",   pct: 100 },
+          { name: "Persiapan Lokasi",        pct: 100 },
+          { name: "Pekerjaan Jalan",         pct: 100 },
+          { name: "Instalasi Utilitas",      pct: 100 },
+          { name: "Finishing & QC",          pct: 100 }
+        ],
+        photos: [
+          { src: "images/project-mainroad.jpg", caption: "Main road selesai — tampak keseluruhan" },
+          { src: "", caption: "Instalasi sistem air bersih" },
+          { src: "", caption: "Sistem penerangan jalan" }
+        ]
+      },
+
+      "MIP-2025-003": {
+        name: "Pembangunan Pabrik Air Minum — PT Akasha",
+        client: "PT Akasha Wira International — Cibinong, Bogor",
+        status: "aktif",
+        start: "April 2025",
+        end: "Oktober 2025",
+        pct: 38,
+        lastUpdate: "Diperbarui 4 Juni 2025 oleh Tim Lapangan MIP",
+        stages: [
+          { name: "Perencanaan & Desain",   pct: 100 },
+          { name: "Persiapan Lokasi",        pct: 100 },
+          { name: "Pekerjaan Pondasi",       pct: 60  },
+          { name: "Struktur Bangunan",       pct: 15  },
+          { name: "MEP & Finishing",         pct: 0   }
+        ],
+        photos: [
+          { src: "images/project-pabrik-air.jpg", caption: "Foto udara lokasi proyek" },
+          { src: "", caption: "Pengerjaan pondasi area produksi" },
+          { src: "", caption: "Mobilisasi alat berat" },
+          { src: "", caption: "Progres April 2025" }
+        ]
+      }
+    };
+
+    // =========================================================
+    var input    = document.getElementById('projectCode');
+    var btnCheck = document.getElementById('checkProgress');
+    var errBox   = document.getElementById('trackerError');
+    var resBox   = document.getElementById('trackerResult');
+
+    function showProject(code) {
+      var data = PROJECTS[code.trim().toUpperCase()];
+
+      errBox.classList.remove('show');
+      resBox.classList.remove('show');
+
+      if (!data) {
+        errBox.classList.add('show');
+        errBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        return;
+      }
+
+      // Badge
+      var badge = document.getElementById('resultBadge');
+      badge.textContent = data.status === 'selesai' ? 'Selesai' :
+                          data.status === 'ditunda' ? 'Ditunda' : 'Aktif';
+      badge.className   = 'tracker-badge ' + (data.status !== 'aktif' ? data.status : '');
+
+      // Info
+      document.getElementById('resultName').textContent  = data.name;
+      document.getElementById('resultMeta').textContent  = data.client;
+      document.getElementById('resultStart').textContent = data.start;
+      document.getElementById('resultEnd').textContent   = data.end;
+      document.getElementById('resultUpdate').textContent = data.lastUpdate;
+
+      // Progress bar (reset first, then animate)
+      var bar = document.getElementById('resultBar');
+      var pct = document.getElementById('resultPct');
+      bar.style.width = '0%';
+      pct.textContent = '0%';
+      setTimeout(function () {
+        bar.style.width = data.pct + '%';
+        animateNumber(pct, 0, data.pct, 1200);
+      }, 120);
+
+      // Stages
+      var stagesEl = document.getElementById('resultStages');
+      stagesEl.innerHTML = '';
+      data.stages.forEach(function (s) {
+        var done = s.pct === 100 ? ' done' : '';
+        stagesEl.innerHTML +=
+          '<div class="tracker-stage-item">' +
+            '<div class="tracker-stage-name">' + s.name + '</div>' +
+            '<div class="tracker-stage-bar-bg">' +
+              '<div class="tracker-stage-bar-fill' + done + '" style="width:0%" data-target="' + s.pct + '"></div>' +
+            '</div>' +
+            '<div class="tracker-stage-pct">' + s.pct + '%</div>' +
+          '</div>';
+      });
+
+      // Gallery
+      var gallery = document.getElementById('resultGallery');
+      gallery.innerHTML = '';
+      var lightboxPhotos = data.photos;
+      data.photos.forEach(function (p, i) {
+        var item = document.createElement('div');
+        item.className = 'tracker-gallery-item';
+        item.setAttribute('data-idx', i);
+        if (p.src) {
+          item.innerHTML =
+            '<img src="' + p.src + '" alt="' + p.caption + '" loading="lazy" />' +
+            '<div class="tracker-gallery-overlay">' +
+              '<span class="tracker-gallery-caption">' + p.caption + '</span>' +
+            '</div>';
+        } else {
+          item.innerHTML =
+            '<div class="tracker-photo-placeholder">' +
+              '&#128248;<span>Segera hadir</span>' +
+            '</div>';
+        }
+        if (p.src) {
+          item.addEventListener('click', function () {
+            openLightbox(lightboxPhotos, i);
+          });
+        }
+        gallery.appendChild(item);
+      });
+
+      resBox.classList.add('show');
+      resBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      // Animate stage bars after paint
+      setTimeout(function () {
+        document.querySelectorAll('.tracker-stage-bar-fill').forEach(function (el) {
+          el.style.width = el.getAttribute('data-target') + '%';
+        });
+      }, 300);
+    }
+
+    function animateNumber(el, from, to, duration) {
+      var start = null;
+      function step(ts) {
+        if (!start) start = ts;
+        var prog = Math.min((ts - start) / duration, 1);
+        el.textContent = Math.round(from + prog * (to - from)) + '%';
+        if (prog < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+
+    btnCheck.addEventListener('click', function () {
+      showProject(input.value);
+    });
+    input.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') showProject(input.value);
+    });
+
+    // ---- Lightbox ----
+    var lb        = document.getElementById('lightbox');
+    var lbImg     = document.getElementById('lightboxImg');
+    var lbCaption = document.getElementById('lightboxCaption');
+    var lbClose   = document.getElementById('lightboxClose');
+    var lbPrev    = document.getElementById('lightboxPrev');
+    var lbNext    = document.getElementById('lightboxNext');
+    var lbPhotos  = [];
+    var lbIdx     = 0;
+
+    function openLightbox(photos, idx) {
+      lbPhotos = photos.filter(function (p) { return p.src; });
+      lbIdx = lbPhotos.findIndex(function (p, i) { return photos[idx] && p.src === photos[idx].src; });
+      if (lbIdx < 0) lbIdx = 0;
+      renderLightbox();
+      lb.classList.add('open');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function renderLightbox() {
+      lbImg.src            = lbPhotos[lbIdx].src;
+      lbCaption.textContent = lbPhotos[lbIdx].caption;
+    }
+
+    lbClose.addEventListener('click', function () {
+      lb.classList.remove('open');
+      document.body.style.overflow = '';
+    });
+    lb.addEventListener('click', function (e) {
+      if (e.target === lb) { lb.classList.remove('open'); document.body.style.overflow = ''; }
+    });
+    lbPrev.addEventListener('click', function () {
+      lbIdx = (lbIdx - 1 + lbPhotos.length) % lbPhotos.length;
+      renderLightbox();
+    });
+    lbNext.addEventListener('click', function () {
+      lbIdx = (lbIdx + 1) % lbPhotos.length;
+      renderLightbox();
+    });
+    document.addEventListener('keydown', function (e) {
+      if (!lb.classList.contains('open')) return;
+      if (e.key === 'ArrowLeft')  { lbIdx = (lbIdx - 1 + lbPhotos.length) % lbPhotos.length; renderLightbox(); }
+      if (e.key === 'ArrowRight') { lbIdx = (lbIdx + 1) % lbPhotos.length; renderLightbox(); }
+      if (e.key === 'Escape')     { lb.classList.remove('open'); document.body.style.overflow = ''; }
+    });
+
+  })();
+  </script>
+
 </body>
 </html>
