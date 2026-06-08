@@ -5,8 +5,16 @@
     "tanggal_update": "5 Juni 2025",
     "foto": [
       { "src": "images/progress/mip001-01.jpeg", "caption": "Pengecoran beton tahap pertama" },
-      { "src": "images/progress/mip001-02.jpg", "caption": "Struktur retaining wall 70%" },
-      { "src": "images/progress/mip001-03.jpg", "caption": "Progres terkini" }
+      { "src": "images/progress/mip001-02.jpg",  "caption": "Struktur retaining wall 70%" },
+      { "src": "images/progress/mip001-03.jpg",  "caption": "Progres terkini" }
+    ]
+  },
+  "MIP-2025-002": {
+    "nama": "Main Road & Utility System — Pabrik Susu Ultra",
+    "pct": 100,
+    "tanggal_update": "28 April 2025",
+    "foto": [
+      { "src": "images/project-mainroad.jpg", "caption": "Main road selesai" }
     ]
   }
 }
