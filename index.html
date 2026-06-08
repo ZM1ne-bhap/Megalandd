@@ -563,22 +563,10 @@
       <!-- Result Panel -->
       <div class="tracker-result" id="trackerResult">
 
-        <!-- Project Header -->
         <div class="tracker-header">
           <div class="tracker-project-info">
             <span class="tracker-badge" id="resultBadge">Aktif</span>
             <h3 class="tracker-project-name" id="resultName">&#8212;</h3>
-            <p class="tracker-project-meta" id="resultMeta">&#8212;</p>
-          </div>
-          <div class="tracker-dates">
-            <div class="tracker-date-item">
-              <span class="tracker-date-label">Mulai</span>
-              <span class="tracker-date-value" id="resultStart">&#8212;</span>
-            </div>
-            <div class="tracker-date-item">
-              <span class="tracker-date-label">Target Selesai</span>
-              <span class="tracker-date-value" id="resultEnd">&#8212;</span>
-            </div>
           </div>
         </div>
 
@@ -966,12 +954,20 @@
     // Muat data proyek dari JSON saat halaman dibuka
     fetch('projects.json?v=' + Date.now())
       .then(function(r) { return r.json(); })
-      .then(function(data) { PROJECTS = data; })
+      .then(function(data) { PROJECTS = data; console.log('projects.json berhasil dimuat:', Object.keys(data)); })
       .catch(function() {
         console.warn('projects.json tidak ditemukan. Pastikan file ada di folder yang sama dengan index.html.');
       });
 
     function showProject(code) {
+      if (Object.keys(PROJECTS).length === 0) {
+        errBox.querySelector('strong').textContent = 'Data belum siap';
+        errBox.querySelector('p').textContent = 'Tunggu sebentar lalu coba lagi.';
+        errBox.classList.add('show');
+        return;
+      }
+      errBox.querySelector('strong').textContent = 'Kode proyek tidak ditemukan';
+      errBox.querySelector('p').textContent = 'Pastikan kode yang Anda masukkan sudah benar, atau hubungi tim MIP untuk bantuan.';
       var data = PROJECTS[code.trim().toUpperCase()];
 
       errBox.classList.remove('show');
@@ -983,20 +979,19 @@
         return;
       }
 
-      // Badge
-      var badge = document.getElementById('resultBadge');
-      badge.textContent = data.status === 'selesai' ? 'Selesai' :
-                          data.status === 'ditunda' ? 'Ditunda' : 'Aktif';
-      badge.className   = 'tracker-badge ' + (data.status !== 'aktif' ? data.status : '');
-
       // Info
-      document.getElementById('resultName').textContent  = data.name;
-      document.getElementById('resultMeta').textContent  = data.client;
-      document.getElementById('resultStart').textContent = data.start;
-      document.getElementById('resultEnd').textContent   = data.end;
-      document.getElementById('resultUpdate').textContent = data.lastUpdate;
+      document.getElementById('resultName').textContent   = data.nama;
+      document.getElementById('resultMeta').textContent   = '';
+      document.getElementById('resultStart').textContent  = '';
+      document.getElementById('resultEnd').textContent    = '';
+      document.getElementById('resultUpdate').textContent = 'Update terakhir: ' + data.tanggal_update;
 
-      // Progress bar (reset first, then animate)
+      // Badge sederhana
+      var badge = document.getElementById('resultBadge');
+      badge.textContent = data.pct >= 100 ? 'Selesai' : 'Aktif';
+      badge.className   = 'tracker-badge ' + (data.pct >= 100 ? 'selesai' : '');
+
+      // Progress bar
       var bar = document.getElementById('resultBar');
       var pct = document.getElementById('resultPct');
       bar.style.width = '0%';
@@ -1006,58 +1001,32 @@
         animateNumber(pct, 0, data.pct, 1200);
       }, 120);
 
-      // Stages
-      var stagesEl = document.getElementById('resultStages');
-      stagesEl.innerHTML = '';
-      data.stages.forEach(function (s) {
-        var done = s.pct === 100 ? ' done' : '';
-        stagesEl.innerHTML +=
-          '<div class="tracker-stage-item">' +
-            '<div class="tracker-stage-name">' + s.name + '</div>' +
-            '<div class="tracker-stage-bar-bg">' +
-              '<div class="tracker-stage-bar-fill' + done + '" style="width:0%" data-target="' + s.pct + '"></div>' +
-            '</div>' +
-            '<div class="tracker-stage-pct">' + s.pct + '%</div>' +
-          '</div>';
-      });
+      // Kosongkan stages (tidak dipakai)
+      document.getElementById('resultStages').innerHTML = '';
 
-      // Gallery
+      // Gallery (maks 3 foto)
       var gallery = document.getElementById('resultGallery');
       gallery.innerHTML = '';
-      var lightboxPhotos = data.photos;
-      data.photos.forEach(function (p, i) {
+      var lightboxPhotos = data.foto;
+      data.foto.forEach(function (p, i) {
         var item = document.createElement('div');
         item.className = 'tracker-gallery-item';
-        item.setAttribute('data-idx', i);
         if (p.src) {
           item.innerHTML =
             '<img src="' + p.src + '" alt="' + p.caption + '" loading="lazy" />' +
             '<div class="tracker-gallery-overlay">' +
               '<span class="tracker-gallery-caption">' + p.caption + '</span>' +
             '</div>';
+          item.addEventListener('click', function () { openLightbox(lightboxPhotos, i); });
         } else {
           item.innerHTML =
-            '<div class="tracker-photo-placeholder">' +
-              '&#128248;<span>Segera hadir</span>' +
-            '</div>';
-        }
-        if (p.src) {
-          item.addEventListener('click', function () {
-            openLightbox(lightboxPhotos, i);
-          });
+            '<div class="tracker-photo-placeholder">&#128248;<span>Segera hadir</span></div>';
         }
         gallery.appendChild(item);
       });
 
       resBox.classList.add('show');
       resBox.scrollIntoView({ behavior: 'smooth', block: 'start' });
-
-      // Animate stage bars after paint
-      setTimeout(function () {
-        document.querySelectorAll('.tracker-stage-bar-fill').forEach(function (el) {
-          el.style.width = el.getAttribute('data-target') + '%';
-        });
-      }, 300);
     }
 
     function animateNumber(el, from, to, duration) {
