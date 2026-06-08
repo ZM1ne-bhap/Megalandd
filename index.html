@@ -953,89 +953,23 @@
   (function () {
 
     // =========================================================
-    // DATA PROYEK
-    // Tambahkan/edit proyek di sini. Untuk foto, isi "src" dengan
-    // path gambar (misal "images/proyek-abc-01.jpg").
-    // Jika belum ada foto sungguhan, biarkan src kosong ("") maka
-    // akan tampil placeholder otomatis.
+    // Data proyek dibaca otomatis dari file projects.json
+    // Admin cukup edit file projects.json — tidak perlu ubah HTML
     // =========================================================
-    var PROJECTS = {
-      "MIP-2025-001": {
-        name: "Retaining Wall Kawasan Industri MM2100",
-        client: "Klien Industri — Bekasi, Jawa Barat",
-        status: "aktif",          // "aktif" | "selesai" | "ditunda"
-        start: "Maret 2025",
-        end: "Agustus 2025",
-        pct: 72,
-        lastUpdate: "Diperbarui 5 Juni 2025 oleh Tim Lapangan MIP",
-        stages: [
-          { name: "Perencanaan & Desain",   pct: 100 },
-          { name: "Persiapan Lokasi",        pct: 100 },
-          { name: "Pekerjaan Pondasi",       pct: 95  },
-          { name: "Struktur Beton",          pct: 70  },
-          { name: "Finishing & QC",          pct: 10  }
-        ],
-        photos: [
-          { src: "images/progress/mip001-01.jpg", caption: "Pembersihan & pematangan lahan (Maret 2025)" },
-          { src: "images/progress/mip001-02.jpg", caption: "Pemasangan bekisting pondasi" },
-          { src: "images/progress/mip001-03.jpg", caption: "Pengecoran beton tahap pertama" },
-          { src: "images/progress/mip001-04.jpg", caption: "Struktur retaining wall progres 70%" },
-          { src: "",                                caption: "Dokumentasi minggu ini (segera)" },
-          { src: "",                                caption: "Dokumentasi minggu ini (segera)" }
-        ]
-      },
+    var PROJECTS = {};
 
-      "MIP-2025-002": {
-        name: "Main Road & Utility System — Pabrik Susu Ultra",
-        client: "PT Ultra Jaya Milk Industry — MM2100",
-        status: "selesai",
-        start: "Januari 2025",
-        end: "April 2025",
-        pct: 100,
-        lastUpdate: "Serah terima selesai 28 April 2025",
-        stages: [
-          { name: "Perencanaan & Desain",   pct: 100 },
-          { name: "Persiapan Lokasi",        pct: 100 },
-          { name: "Pekerjaan Jalan",         pct: 100 },
-          { name: "Instalasi Utilitas",      pct: 100 },
-          { name: "Finishing & QC",          pct: 100 }
-        ],
-        photos: [
-          { src: "images/project-mainroad.jpg", caption: "Main road selesai — tampak keseluruhan" },
-          { src: "", caption: "Instalasi sistem air bersih" },
-          { src: "", caption: "Sistem penerangan jalan" }
-        ]
-      },
-
-      "MIP-2025-003": {
-        name: "Pembangunan Pabrik Air Minum — PT Akasha",
-        client: "PT Akasha Wira International — Cibinong, Bogor",
-        status: "aktif",
-        start: "April 2025",
-        end: "Oktober 2025",
-        pct: 38,
-        lastUpdate: "Diperbarui 4 Juni 2025 oleh Tim Lapangan MIP",
-        stages: [
-          { name: "Perencanaan & Desain",   pct: 100 },
-          { name: "Persiapan Lokasi",        pct: 100 },
-          { name: "Pekerjaan Pondasi",       pct: 60  },
-          { name: "Struktur Bangunan",       pct: 15  },
-          { name: "MEP & Finishing",         pct: 0   }
-        ],
-        photos: [
-          { src: "images/project-pabrik-air.jpg", caption: "Foto udara lokasi proyek" },
-          { src: "", caption: "Pengerjaan pondasi area produksi" },
-          { src: "", caption: "Mobilisasi alat berat" },
-          { src: "", caption: "Progres April 2025" }
-        ]
-      }
-    };
-
-    // =========================================================
     var input    = document.getElementById('projectCode');
     var btnCheck = document.getElementById('checkProgress');
     var errBox   = document.getElementById('trackerError');
     var resBox   = document.getElementById('trackerResult');
+
+    // Muat data proyek dari JSON saat halaman dibuka
+    fetch('projects.json?v=' + Date.now())
+      .then(function(r) { return r.json(); })
+      .then(function(data) { PROJECTS = data; })
+      .catch(function() {
+        console.warn('projects.json tidak ditemukan. Pastikan file ada di folder yang sama dengan index.html.');
+      });
 
     function showProject(code) {
       var data = PROJECTS[code.trim().toUpperCase()];
