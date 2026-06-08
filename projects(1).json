@@ -1,0 +1,12 @@
+{
+  "MIP-2025-001": {
+    "nama": "Retaining Wall Kawasan Industri MM2100",
+    "pct": 72,
+    "tanggal_update": "5 Juni 2025",
+    "foto": [
+      { "src": "images/progress/mip001-01.jpg", "caption": "Pengecoran beton tahap pertama" },
+      { "src": "images/progress/mip001-02.jpg", "caption": "Struktur retaining wall 70%" },
+      { "src": "images/progress/mip001-03.jpg", "caption": "Progres terkini" }
+    ]
+  }
+}
