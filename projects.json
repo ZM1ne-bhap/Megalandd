@@ -7,6 +7,7 @@
       { "src": "images/progress/001/mip001.01.jpeg", "caption": "A" },
       { "src": "images/progress/001/mip001.02.jpeg",  "caption": "B" },
       { "src": "images/progress/001/mip001.03.jpeg",  "caption": "C" }
+      { "src": "images/project-mainroad.jpg", "caption": "Main road selesai" }
     ]
   },
   "MIP-2025-002": {
@@ -15,6 +16,8 @@
     "tanggal_update": "28 April 2025",
     "foto": [
       { "src": "images/project-mainroad.jpg", "caption": "Main road selesai" }
+      { "src": "images/project-mainroad.jpg", "caption": "Main road selesai" }
     ]
   }
 }
+"D:\website pertama\git\web srius\Megachan\images\progress\001\mip001-02.jpeg"
